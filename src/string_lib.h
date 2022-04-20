@@ -52,7 +52,7 @@ void string_cut_at_char(char **string_to_cut, size_t cut_place);
  */
 bool string_concat(char **to_extend, const char *to_append);
 
-/** @brief Function checks if @p s2 is prefix of @s1.
+/** @brief Function checks if @p s2 is prefix of @p s1.
  * 
  * @param s1 : string to check prefix of.
  * @param start_char : index of char to start checking.

@@ -18,6 +18,8 @@ const char *trie_get(const Trie *tree, const char *key);
 
 void trie_remove(Trie *tree, const char *key);
 
+void trie_remove_subtree(Trie *tree, const char *prefix);
+
 void trie_drop(Trie *tree);
 
 void trie_debug_print(Trie *tree);

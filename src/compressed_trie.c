@@ -82,7 +82,7 @@ static bool trie_conflict(
     char *old_str = node->children[next_int].edge_etiquette;
     TrieNode *old_child = node->children[next_int].child;
 
-    size_t key_ind = key[char_no + prefix_size];
+    size_t key_ind = char_digitize(key[char_no + prefix_size]);
     size_t old_ind = char_digitize(old_str[prefix_size]);
 
     assert(key_ind != old_ind);
@@ -456,6 +456,7 @@ bool trie_insert(Trie *tree, const char *key, const char *value) {
     return true;
 }
 
+
 void trie_remove(Trie *tree, const char *key) {
     TrieNode *node = NULL;
     size_t index_k = 0;
@@ -468,6 +469,44 @@ void trie_remove(Trie *tree, const char *key) {
         node->value = NULL;
         trie_node_purge(node, index_k);
     }
+}
+
+static void trienode_debug_print(TrieNode *node); 
+
+void trie_remove_subtree(Trie *tree, const char *prefix) {
+    size_t input_len = strlen(prefix);
+    size_t actual_char = 0;
+    TrieNode *actual = tree->root;
+    size_t father_child_index = 11;
+    bool found_tree = false;
+
+    while (input_len > actual_char) {
+        size_t pref_len;
+
+        size_t node_ind = char_digitize(prefix[actual_char]);
+        
+        char *to_check = actual->children[node_ind].edge_etiquette;
+        if (to_check == NULL) {
+            printf("TRIE REMOVE FOUND NOTHING 1.\n");
+            return;
+        }
+        printf("CHECK ETIQ %s\n", to_check);
+
+        if (string_check_prefixes(prefix, actual_char, to_check, &pref_len)) {
+            actual = actual->children[node_ind].child;
+            printf("A\n");
+        } else if (actual_char + pref_len != input_len) {
+            printf("TRIE REMOVE FOUND NOTHING 2.\n");
+            return;
+        }
+
+        father_child_index = node_ind;
+        actual_char += pref_len;
+    }
+
+    printf("TRIE REMOVE FOUND SOMETHING OF VALUE %s AT INDEX %zu\n", actual->value, father_child_index);
+    printf("FOUND POINTER %p\n", actual);
+    trienode_debug_print(actual);
 }
 
 void trie_drop(Trie *tree) {
