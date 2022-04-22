@@ -16,6 +16,8 @@ bool trie_insert(Trie *tree, const char *key, const char *value);
 
 const char *trie_get(const Trie *tree, const char *key);
 
+char *trie_match_longest_prefix(const Trie *tree, const char *key, bool *memory_error);
+
 void trie_remove(Trie *tree, const char *key);
 
 void trie_remove_subtree(Trie *tree, const char *prefix);

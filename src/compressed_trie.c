@@ -1,7 +1,6 @@
 #include "compressed_trie.h"
 #include "memory.h" 
 #include "string_lib.h"
-#include "string_vector.h"
 #include <string.h>
 #include <assert.h>
 #include <stdio.h>
@@ -23,7 +22,6 @@ struct TrieNode {
     TrieChild children[MAX_NUMBER_OF_CHILDREN];
 
     char *value;
-    StringVector *value_reverse;
 };
 typedef struct TrieNode TrieNode;
 
@@ -51,7 +49,6 @@ static TrieNode *init_empty_trienode(bool *memory_error_occured) {
     }
 
     node->value = NULL;
-    node->value_reverse = init_stringvector();
 
     return node;
 }
@@ -82,8 +79,27 @@ static bool trie_conflict(
     char *old_str = node->children[next_int].edge_etiquette;
     TrieNode *old_child = node->children[next_int].child;
 
-    size_t key_ind = char_digitize(key[char_no + prefix_size]);
     size_t old_ind = char_digitize(old_str[prefix_size]);
+    if (char_no + prefix_size == strlen(key)) {
+        child->children[old_ind].edge_etiquette = 
+            string_clone_from_index(old_str, prefix_size);
+        if (child->children[old_ind].edge_etiquette == NULL) {
+            trie_drop_one_node(child);
+            return false;
+        }
+
+        string_cut_at_char(&node->children[next_int].edge_etiquette, prefix_size);
+        node->children[next_int].child = child;
+        child->children[old_ind].child = old_child;
+        old_child->father = child;
+        child->father = node;
+        *new_node = child;
+
+        return true;
+    }
+    
+
+    size_t key_ind = char_digitize(key[char_no + prefix_size]);
 
     assert(key_ind != old_ind);
     
@@ -155,6 +171,45 @@ static bool search_node(
     }
 
     return false;
+}
+
+static const char *search_longest_prefix(
+    TrieNode *beggining,
+    const char *key,
+    size_t *longest_pref_size
+) {
+    size_t actual_char = 0;
+    size_t key_length = strlen(key);
+    const char *result = NULL;
+    TrieNode *a = NULL;
+
+    while (beggining != NULL) {
+        if (actual_char == key_length) {
+            return result;
+        }
+
+        size_t digit = char_digitize(key[actual_char]);
+        size_t pref_len = 0;
+        const char *etiq = beggining->children[digit].edge_etiquette;
+
+
+        if (etiq == NULL) {
+            return result;
+        } else if (string_check_prefixes(key, actual_char, etiq, &pref_len)) {
+            a = beggining;
+            beggining = beggining->children[digit].child;
+            actual_char += pref_len;
+
+            if (beggining->value != NULL) {
+                *longest_pref_size = actual_char;
+                result = beggining->value;
+            }
+        } else {
+            return result;
+        }
+    }
+
+    return result;
 }
 
 static bool trie_check_add_node(TrieNode *root, const char *key, TrieNode **check_result) {
@@ -245,7 +300,6 @@ static void trienode_drop(TrieNode *node) {
     }
 
     wrap_free(node->value);
-    stringvector_drop(node->value_reverse);
 
     wrap_free(node);
 }
@@ -355,77 +409,13 @@ static void trie_node_purge(TrieNode *node, size_t index) {
     }
 }
 
-static void trie_remove_reverse(Trie *tree, const char *value, const char *key) {
-    size_t index = 0;
-    TrieNode *node = NULL;
-
-    search_node(tree->root, &node, value, &index);
-    assert(node != NULL);
-    
-    stringvector_remove(node->value_reverse, key);
-
-    if (node->value != NULL || (stringvector_size(node->value_reverse) != 0)) {
-        return;
-    }
-
-    trie_node_purge(node, index);
-}
-
-void xtrie_remove(Trie *tree, const char *key) {
-    TrieNode *node = NULL;
-    size_t index = 0;
-
-    if (search_node(tree->root, &node, key, &index)) {
-        TrieNode *father = node->father;
-        size_t node_children = 0;
-        size_t child_index = 11;
-
-        for (size_t digit = 0 ; digit <= 9 ; digit++) {
-            if (node->children[digit].child != NULL) {
-                node_children++;
-                child_index = digit;
-            }
-        }
-        assert(child_index != 11 || node_children == 0);
-
-        if (node_children == 0) {
-
-            wrap_free(node->value);
-            wrap_free(node);
-            wrap_free(father->children[index].edge_etiquette);
-
-            father->children[index].edge_etiquette = NULL;
-            father->children[index].child = NULL;
-
-            trie_balance(father);
-
-        } else if (node_children == 1) {
-
-            wrap_free(node->value);
-
-            string_concat(&father->children[index].edge_etiquette, 
-                node->children[child_index].edge_etiquette);
-            wrap_free(node->children[child_index].edge_etiquette);
-            
-            node->children[child_index].child->father = father;
-            father->children[index].child = 
-                node->children[child_index].child;
-            
-            wrap_free(node);
-        } else { // if node_children >= 2
-            wrap_free(node->value);
-            node->value = NULL;
-        }
-    }
-}
-
 //TODO: INSERT MOŻE OPEROWAĆ NA CHAR POINTERACH
 bool trie_insert(Trie *tree, const char *key, const char *value) {
     TrieNode *node = NULL;
     if (trie_check_add_node(tree->root, key, &node)) {
         char *prev_value = node->value;
 
-        node->value = string_clone(key);
+        node->value = string_clone(value);
         if (node->value == NULL) {
             if (prev_value != NULL) {
                 node->value = prev_value;
@@ -434,7 +424,6 @@ bool trie_insert(Trie *tree, const char *key, const char *value) {
             }
             return false;
         } else {
-            //trie_remove_reverse(tree, prev_value, key);
             wrap_free(prev_value);
         }
 
@@ -443,17 +432,8 @@ bool trie_insert(Trie *tree, const char *key, const char *value) {
     }
 
     node = NULL;
-    if (trie_check_add_node(tree->root, value, &node)) {
 
-        if (!stringvector_add(&(node->value_reverse), key)) {
-            return false;
-        }
-
-    } else {
-        return false;
-    }
-
-    return true;
+    return trie_check_add_node(tree->root, value, &node);
 }
 
 
@@ -463,7 +443,6 @@ void trie_remove(Trie *tree, const char *key) {
 
     if (search_node(tree->root, &node, key, &index_k)) {
         const char *value = node->value;
-        trie_remove_reverse(tree, value, key);
 
         wrap_free(node->value);
         node->value = NULL;
@@ -471,7 +450,7 @@ void trie_remove(Trie *tree, const char *key) {
     }
 }
 
-static void trienode_debug_print(TrieNode *node); 
+static void trienode_debug_print(TrieNode *node);
 
 void trie_remove_subtree(Trie *tree, const char *prefix) {
     size_t input_len = strlen(prefix);
@@ -490,23 +469,35 @@ void trie_remove_subtree(Trie *tree, const char *prefix) {
             printf("TRIE REMOVE FOUND NOTHING 1.\n");
             return;
         }
-        printf("CHECK ETIQ %s\n", to_check);
 
         if (string_check_prefixes(prefix, actual_char, to_check, &pref_len)) {
-            actual = actual->children[node_ind].child;
             printf("A\n");
         } else if (actual_char + pref_len != input_len) {
             printf("TRIE REMOVE FOUND NOTHING 2.\n");
             return;
         }
+        actual = actual->children[node_ind].child;
 
         father_child_index = node_ind;
         actual_char += pref_len;
     }
 
-    printf("TRIE REMOVE FOUND SOMETHING OF VALUE %s AT INDEX %zu\n", actual->value, father_child_index);
+    /* printf("TRIE REMOVE FOUND SOMETHING OF VALUE %s AT INDEX %zu\n", actual->value, father_child_index);
     printf("FOUND POINTER %p\n", actual);
-    trienode_debug_print(actual);
+    trienode_debug_print(actual); */
+
+    TrieNode *actual_father = actual->father;
+
+    trienode_drop(actual);
+
+    if (actual_father != NULL) { // == NULL if node is root of the tree
+        actual_father->children[father_child_index].child = NULL;
+
+        wrap_free(actual_father->children[father_child_index].edge_etiquette);
+        actual_father->children[father_child_index].edge_etiquette = NULL;
+    }
+
+    trie_balance(actual_father);
 }
 
 void trie_drop(Trie *tree) {
@@ -543,4 +534,30 @@ static void trienode_debug_print(TrieNode *node) {
 
 void trie_debug_print(Trie *tree) {
     trienode_debug_print(tree->root);
+}
+
+char *trie_match_longest_prefix(
+    const Trie *tree,
+    const char *key,
+    bool *memory_error
+) {
+    size_t pref_len = 0;
+    const char *value = search_longest_prefix(tree->root, key, &pref_len);
+    if (value == NULL) {
+        return NULL;
+    }
+    
+    size_t val_len = strlen(value);
+
+    size_t res_len = val_len + (strlen(key) - pref_len);
+
+    char *res = wrap_malloc(sizeof(char) * (res_len + 1));
+    if (res == NULL) {
+        *memory_error = true;
+        return NULL;
+    }
+
+    strncpy(res, value, val_len);
+    strcpy(res + val_len, key + pref_len);
+    return res;
 }
