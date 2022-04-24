@@ -1,7 +1,7 @@
 project(duze1)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_C_FLAGS "-std=c17 -Wall -Wextra -Wno-implicit-fallthrough -fanalyzer")
+set(CMAKE_C_FLAGS "-std=c17 -Wall -Wextra -Wno-implicit-fallthrough")
 set(CMAKE_C_FLAGS_DEBUG "-g")
 
 add_library(duze1 SHARED

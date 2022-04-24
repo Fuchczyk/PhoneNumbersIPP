@@ -12,16 +12,22 @@ typedef struct TrieChild TrieChild;
 
 struct TrieNode;
 
+/**
+ * @brief Represents children reference of given node.
+ */
 struct TrieChild {
-    struct TrieNode *child;
-    char *edge_etiquette;
+    struct TrieNode *child; ///< Pointer to children node.
+    char *edge_etiquette; //;< Etiquetee of parent-children edge.
 };
 
+/**
+ * @brief Represents node of compressed trie.
+ */
 struct TrieNode {
-    struct TrieNode *father;
-    TrieChild children[MAX_NUMBER_OF_CHILDREN];
+    struct TrieNode *father; ///< Pointer to father of node.
+    TrieChild children[MAX_NUMBER_OF_CHILDREN]; ///< Array which stores referencess to children.
 
-    char *value;
+    char *value; ///< Value connected to node.
 };
 typedef struct TrieNode TrieNode;
 
@@ -278,17 +284,6 @@ Trie *init_trie(bool *memory_error) {
     return tree;
 }
 
-const char *trie_get(const Trie *tree, const char *key) {
-    TrieNode *node = NULL;
-    size_t index = 0;
-
-    if (search_node(tree->root, &node, key, &index)) {
-        return node->value;
-    } else {
-        return NULL;
-    }
-}
-
 static void trienode_drop(TrieNode *node) {
     if (node == NULL) {
         return;
@@ -368,7 +363,7 @@ static void trie_balance(TrieNode *node) {
 
             node = father;
             assert(node_children != 0);
-            node_children -= 1;
+            //node_children -= 1;
         } else {
             break;
         }
@@ -431,9 +426,7 @@ bool trie_insert(Trie *tree, const char *key, const char *value) {
         return false;
     }
 
-    node = NULL;
-
-    return trie_check_add_node(tree->root, value, &node);
+    return true;
 }
 
 
@@ -467,11 +460,12 @@ void trie_remove_subtree(Trie *tree, const char *prefix) {
         char *to_check = actual->children[node_ind].edge_etiquette;
         if (to_check == NULL) {
             printf("TRIE REMOVE FOUND NOTHING 1.\n");
+            printf("DO USUNIECIA BYŁO (1): %s\n", prefix);
             return;
         }
 
         if (string_check_prefixes(prefix, actual_char, to_check, &pref_len)) {
-            printf("A\n");
+            //
         } else if (actual_char + pref_len != input_len) {
             printf("TRIE REMOVE FOUND NOTHING 2.\n");
             return;

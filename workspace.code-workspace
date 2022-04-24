@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "rust_generator"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.h": "c",
+			"random": "c"
+		}
+	}
+}
