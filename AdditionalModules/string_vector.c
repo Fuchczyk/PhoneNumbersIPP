@@ -1,3 +1,13 @@
+/**
+ * @file string_vector.c
+ * @author Przemysław Fuchs (fuchs.przemyslaw@gmail.com)
+ * @brief Module implements vector of strings (char pointers).
+ * @version 0.1
+ * @date 2022-04-24
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "string_vector.h"
 #include "string_lib.h"
 #include "memory.h"
@@ -5,11 +15,14 @@
 
 #define VECTOR_START_SIZE 16
 
+/**
+ * @brief Structure to manage dynamic sized array of strings.
+ */
 struct StringVector {
-    char **array;
+    char **array; ///< Array of strings (stored data).
 
-    size_t max_elements;
-    size_t first_free_index;
+    size_t max_elements; ///< Maximum number of stored elements.
+    size_t first_free_index; ///< Index of first free field in array.
 };
 
 static StringVector *init_stringvector_nonempty(bool *error_occured) {

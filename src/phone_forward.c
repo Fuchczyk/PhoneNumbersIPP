@@ -1,3 +1,13 @@
+/**
+ * @file phone_forward.c
+ * @author Przemysław Fuchs (fuchs.przemyslaw@gmail.com)
+ * @brief Module implements interface specified in phone_forward.h
+ * @version 0.1
+ * @date 2022-04-24
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "phone_forward.h"
 #include "compressed_trie.h"
 #include "memory.h"
@@ -5,15 +15,28 @@
 #include <assert.h>
 #include <ctype.h>
 
+/**
+ * @brief Structe visible to library user which is wrapper for trie structure.
+ */
 struct PhoneForward {
-    Trie *database;
+    Trie *database; ///< Trie to store forwards in.
 };
 
+/**
+ * @brief Structure to manage getting information about phone forwarding.
+ */
 struct PhoneNumbers {
-    char **numbers;
-    size_t amount_of_numbers;
+    const char **numbers; ///< Array of strings representing numbers.
+    size_t amount_of_numbers; ///< Number of elements in array.
 };
 
+/**
+ * @brief Function verifies if string privided by the user is valid phone number.
+ * 
+ * @param num : number to verify.
+ * @return true : if string is correct phone number.
+ * @return false : if string does not represent phone number.
+ */
 static bool verify_number(const char *num) {
     while (*num != '\0') {
         if (!isdigit(*num)) {

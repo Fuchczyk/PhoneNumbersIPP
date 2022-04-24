@@ -1,3 +1,13 @@
+/**
+ * @file memory.h
+ * @author Przemysław Fuchs (fuchs.przemyslaw@gmail.com)
+ * @brief Module provides memory allocation wrappers which are used in program.
+ * @version 0.1
+ * @date 2022-04-24
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #ifndef __MEMORY_H__
 #define __MEMORY_H__
 #include <stdlib.h>

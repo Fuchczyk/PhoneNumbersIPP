@@ -1,3 +1,13 @@
+/**
+ * @file string_lib.h
+ * @author Przemysław Fuchs (fuchs.przemyslaw@gmail.com)
+ * @brief Module provides function to perform advanced string operations.
+ * @version 0.1
+ * @date 2022-04-24
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #ifndef __STRING_LIB_H__
 #define __STRING_LIB_H__
 #include <stdbool.h>

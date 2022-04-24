@@ -1,3 +1,13 @@
+/**
+ * @file string_lib.c
+ * @author Przemysław Fuchs (fuchs.przemyslaw@gmail.com)
+ * @brief Module implements advanced string operations.
+ * @version 0.1
+ * @date 2022-04-24
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "string_lib.h"
 #include "memory.h"
 #include <string.h>

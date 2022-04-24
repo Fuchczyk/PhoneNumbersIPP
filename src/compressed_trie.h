@@ -1,3 +1,17 @@
+/**
+ * @file compressed_trie.h
+ * @author Przemysław Fuchs (fuchs.przemyslaw@gmail.com)
+ * @brief Inteface of module implementing Trie data structure.
+ * 
+ * Tries store key <-> value pairs and allows to perform match longest prefix
+ * operation and key <-> value pair deletion and insertion.
+ * 
+ * @version 0.1
+ * @date 2022-04-24
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #ifndef __COMPRESSED_TRIE_H__
 #define __COMPRESSED_TRIE_H__
 #include <stdbool.h>
@@ -44,10 +58,19 @@ bool trie_insert(Trie *tree, const char *key, const char *value);
  */
 char *trie_match_longest_prefix(const Trie *tree, const char *key, bool *memory_error);
 
-void trie_remove(Trie *tree, const char *key);
-
+/**
+ * @brief Removes all (key, value) pairs such that key has prefix which equals @p prefix.
+ * 
+ * @param tree : trie to remove data from.
+ * @param prefix : prefix of key to delete.
+ */
 void trie_remove_subtree(Trie *tree, const char *prefix);
 
+/**
+ * @brief Deletes Trie data structure.
+ * 
+ * @param tree : Trie to delete.
+ */
 void trie_drop(Trie *tree);
 
 void trie_debug_print(Trie *tree);
