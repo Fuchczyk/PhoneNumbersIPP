@@ -13,7 +13,7 @@ endif ()
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Ustawiamy wspólne opcje kompilowania dla wszystkich wariantów projektu.
-set(CMAKE_C_FLAGS "-std=c17 -Wall -Wextra -Wno-implicit-fallthrough")
+set(CMAKE_C_FLAGS "-std=c17 -Wall -Wextra -Wno-implicit-fallthrough -fanalyzer")
 # Domyślne opcje dla wariantów Release i Debug są sensowne.
 # Jeśli to konieczne, ustawiamy tu inne.
 set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG")
@@ -29,8 +29,15 @@ set(SOURCE_FILES
     src/string_lib.h
 )
 
+add_library(phone_forward_library SHARED ${SOURCE_FILES})
+
 # Wskazujemy plik wykonywalny.
-add_executable(phone_forward ${SOURCE_FILES})
+add_executable(phone_forward
+    src/phone_forward_example.c)
+target_link_libraries(phone_forward
+    PRIVATE
+        phone_forward_library
+)
 
 # Dodajemy obsługę Doxygena: sprawdzamy, czy jest zainstalowany i jeśli tak to:
 find_package(Doxygen)

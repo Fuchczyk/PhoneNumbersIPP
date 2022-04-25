@@ -253,7 +253,6 @@ static const char *search_longest_prefix(
     size_t actual_char = 0;
     size_t key_length = strlen(key);
     const char *result = NULL;
-    TrieNode *a = NULL;
 
     while (beggining != NULL) {
         if (actual_char == key_length) {
@@ -268,7 +267,6 @@ static const char *search_longest_prefix(
         if (etiq == NULL) {
             return result;
         } else if (string_check_prefixes(key, actual_char, etiq, &pref_len)) {
-            a = beggining;
             beggining = beggining->children[digit].child;
             actual_char += pref_len;
 
@@ -496,8 +494,6 @@ static void trie_remove(Trie *tree, const char *key) {
     size_t index_k = 0;
 
     if (search_node(tree->root, &node, key, &index_k)) {
-        const char *value = node->value;
-
         wrap_free(node->value);
         node->value = NULL;
         trie_node_purge(node, index_k);
@@ -611,7 +607,6 @@ void trie_remove_subtree(Trie *tree, const char *prefix) {
     size_t actual_char = 0;
     TrieNode *actual = tree->root;
     size_t father_child_index = 11;
-    bool found_tree = false;
 
     while (input_len > actual_char) {
         size_t pref_len;
