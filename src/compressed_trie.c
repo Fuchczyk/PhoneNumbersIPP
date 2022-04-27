@@ -615,15 +615,15 @@ void trie_remove_subtree(Trie *tree, const char *prefix) {
         
         char *to_check = actual->children[node_ind].edge_etiquette;
         if (to_check == NULL) {
-            printf("TRIE REMOVE FOUND NOTHING 1.\n");
-            printf("DO USUNIECIA BYŁO (1): %s\n", prefix);
+            // printf("TRIE REMOVE FOUND NOTHING 1.\n");
+            // printf("DO USUNIECIA BYŁO (1): %s\n", prefix);
             return;
         }
 
         if (string_check_prefixes(prefix, actual_char, to_check, &pref_len)) {
             //
         } else if (actual_char + pref_len != input_len) {
-            printf("TRIE REMOVE FOUND NOTHING 2.\n");
+            // printf("TRIE REMOVE FOUND NOTHING 2.\n");
             return;
         }
         actual = actual->children[node_ind].child;

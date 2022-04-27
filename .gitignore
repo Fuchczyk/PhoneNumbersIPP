@@ -2,4 +2,4 @@ build/
 debug/
 .vscode
 src_backup
-/rust_generator
+/testing/rust_generator/target

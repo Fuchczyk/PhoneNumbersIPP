@@ -4,7 +4,7 @@
 			"path": "."
 		},
 		{
-			"path": "rust_generator"
+			"path": "testing/rust_generator"
 		}
 	],
 	"settings": {

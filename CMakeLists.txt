@@ -16,7 +16,7 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_C_FLAGS "-std=c17 -Wall -Wextra -Wno-implicit-fallthrough -fanalyzer")
 # Domyślne opcje dla wariantów Release i Debug są sensowne.
 # Jeśli to konieczne, ustawiamy tu inne.
-set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG")
+set(CMAKE_C_FLAGS_RELEASE "-O3")
 set(CMAKE_C_FLAGS_DEBUG "-g")
 
 # Wskazujemy pliki źródłowe.
@@ -29,7 +29,7 @@ set(SOURCE_FILES
     src/string_lib.h
 )
 
-add_library(phone_forward_library SHARED ${SOURCE_FILES})
+add_library(phone_forward_library STATIC ${SOURCE_FILES})
 
 # Wskazujemy plik wykonywalny.
 add_executable(phone_forward
