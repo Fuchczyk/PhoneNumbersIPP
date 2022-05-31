@@ -2,6 +2,7 @@
  * Interfejs klasy przechowującej przekierowania numerów telefonicznych
  *
  * @author Marcin Peczarski <marpe@mimuw.edu.pl>
+ * @author Przemysław Fuchs <pf438429@students.mimuw.edu.pl>
  * @copyright Uniwersytet Warszawski
  * @date 2022
  */
@@ -16,12 +17,18 @@
  * To jest struktura przechowująca przekierowania numerów telefonów.
  */
 struct PhoneForward;
+/**
+ * @brief Typedef skraca nazwę PhoneForward w celu utrzymania czytelności kodu.
+ */
 typedef struct PhoneForward PhoneForward;
 
 /**
  * To jest struktura przechowująca ciąg numerów telefonów.
  */
 struct PhoneNumbers;
+/**
+ * @brief Typedef skraca nazwę PhoneForward w celu utrzymania czytelności kodu.
+ */
 typedef struct PhoneNumbers PhoneNumbers;
 
 /** @brief Tworzy nową strukturę.
@@ -29,7 +36,7 @@ typedef struct PhoneNumbers PhoneNumbers;
  * @return Wskaźnik na utworzoną strukturę lub NULL, gdy nie udało się
  *         alokować pamięci.
  */
-PhoneForward * phfwdNew(void);
+PhoneForward *phfwdNew(void);
 
 /** @brief Usuwa strukturę.
  * Usuwa strukturę wskazywaną przez @p pf. Nic nie robi, jeśli wskaźnik ten ma
@@ -79,7 +86,7 @@ void phfwdRemove(PhoneForward *pf, char const *num);
  * @return Wskaźnik na strukturę przechowującą ciąg numerów lub NULL, gdy nie
  *         udało się alokować pamięci.
  */
-PhoneNumbers * phfwdGet(PhoneForward const *pf, char const *num);
+PhoneNumbers *phfwdGet(PhoneForward const *pf, char const *num);
 
 /** @brief Wyznacza przekierowania na dany numer.
  * Wyznacza następujący ciąg numerów: jeśli istnieje numer @p x, taki że wynik
@@ -94,7 +101,7 @@ PhoneNumbers * phfwdGet(PhoneForward const *pf, char const *num);
  * @return Wskaźnik na strukturę przechowującą ciąg numerów lub NULL, gdy nie
  *         udało się alokować pamięci.
  */
-PhoneNumbers * phfwdReverse(PhoneForward const *pf, char const *num);
+PhoneNumbers *phfwdReverse(PhoneForward const *pf, char const *num);
 
 /** @brief Usuwa strukturę.
  * Usuwa strukturę wskazywaną przez @p pnum. Nic nie robi, jeśli wskaźnik ten ma
@@ -111,6 +118,6 @@ void phnumDelete(PhoneNumbers *pnum);
  * @return Wskaźnik na napis reprezentujący numer telefonu. Wartość NULL, jeśli
  *         wskaźnik @p pnum ma wartość NULL lub indeks ma za dużą wartość.
  */
-char const * phnumGet(PhoneNumbers const *pnum, size_t idx);
+char const *phnumGet(PhoneNumbers const *pnum, size_t idx);
 
 #endif /* __PHONE_FORWARD_H__ */

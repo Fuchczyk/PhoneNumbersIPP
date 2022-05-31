@@ -7,7 +7,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 
 # Nie chcemy oglądać komunikatów o procentowym postępie kompilacji.
-#   set_property(GLOBAL PROPERTY RULE_MESSAGES OFF)
+# set_property(GLOBAL PROPERTY RULE_MESSAGES OFF)
 
 # Chcemy zobaczyć polecenia wywołane przez make.
 set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -16,28 +16,32 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_C_FLAGS "-std=c17 -Wall -Wextra -Wno-implicit-fallthrough -fanalyzer")
 # Domyślne opcje dla wariantów Release i Debug są sensowne.
 # Jeśli to konieczne, ustawiamy tu inne.
-set(CMAKE_C_FLAGS_RELEASE "-O3")
+set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG")
 set(CMAKE_C_FLAGS_DEBUG "-g")
 
 # Wskazujemy pliki źródłowe.
 set(SOURCE_FILES
-    src/compressed_trie.c
-    src/compressed_trie.h
-    src/phone_forward.c
-    src/phone_forward.h
-    src/string_lib.c
-    src/string_lib.h
-)
+    src/phone_forward_example.c)
 
-add_library(phone_forward_library STATIC ${SOURCE_FILES})
+set(LIBRARY_FILES
+src/phone_forward.h
+src/phone_forward.c
+src/compressed_trie.c
+src/compressed_trie.h
+src/memory.h
+src/string_lib.c
+src/string_lib.h
+src/double_linked_list.c
+src/double_linked_list.h
+src/dynamic_array.c
+src/dynamic_array.h
+src/blackred_tree.c
+src/blackred_tree.h)
 
 # Wskazujemy plik wykonywalny.
-add_executable(phone_forward
-    src/phone_forward_example.c)
-target_link_libraries(phone_forward
-    PRIVATE
-        phone_forward_library
-)
+add_executable(phone_forward ${SOURCE_FILES})
+add_library(phone_forward_library STATIC ${LIBRARY_FILES})
+target_link_libraries(phone_forward phone_forward_library)
 
 # Dodajemy obsługę Doxygena: sprawdzamy, czy jest zainstalowany i jeśli tak to:
 find_package(Doxygen)
